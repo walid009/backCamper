@@ -39,10 +39,9 @@ router.get("/", eventController.getAllEvent)
 *       '200':
 *         description: A successful response
 */
-//router.get("/:emailcreateur", eventController.getAllEventCreatedBy)
+router.get("/:emailcreateur", userController.authenticate, eventController.getAllEventCreatedBy)
 router.post("/create", upload.single('image'), eventController.createEvent)
-router.post("/create-payment-intent", eventController.stripe)
-router.get("/config", eventController.stripeConfig)
+router.post("/createWithImage", upload.single('image'), eventController.createEventWithImage)
 router.post("/createWithoutImage", eventController.createEventWithoutImage)
 router.put("/update/:id", eventController.updateEvent)
 /**
@@ -84,7 +83,7 @@ router.delete("/delete/:id", eventController.deleteEvent)
 *       200:
 *         description: Participated      
 */
-router.get("/participate/:idevent/:iduser", eventsController.participateToEvent)
+router.put("/participate/:id", eventsController.participateToEvent)
 /**
 * @swagger
 * /events/UserAlreadyParticipate/{id}/{email}:
@@ -108,7 +107,7 @@ router.get("/participate/:idevent/:iduser", eventsController.participateToEvent)
 *       '200':
 *         description: A successful response
 */
-router.get("/UserAlreadyParticipate/:id/:email", eventController.UserAlreadyParticipate)
+router.get("/UserAlreadyParticipate/:_id/:email", eventController.UserAlreadyParticipate)
 /**
 * @swagger
 * /events/UsersParticipateTothisEvent/{id}:

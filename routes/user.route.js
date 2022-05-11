@@ -65,8 +65,6 @@ router.post("/create", userController.createUser)
 *         description: A successful response
 */
 router.get("/confirm/:id", userController.updateValidationOrginasateur)
-router.get("/validate/:id", userController.ValidateOrginasateur)
-router.get("/unvalidate/:id", userController.UnValidateOrginasateur)
 /**
 * @swagger
 * /users/getUser/{email}:
