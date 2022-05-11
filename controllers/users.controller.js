@@ -104,6 +104,29 @@ module.exports = {
     return res.send("update");
   },
 
+  ValidateOrginasateur: async (req, res) => {
+    const { id } = req.params;
+    User.updateOne({ _id: id }, { approved: true }, function (err) {
+      if (err) {
+        console.log("failed");
+      } else {
+        console.log("success update");
+      }
+    });
+    return res.send("update");
+  },
+  UnValidateOrginasateur: async (req, res) => {
+    const { id } = req.params;
+    User.updateOne({ _id: id }, { approved: false }, function (err) {
+      if (err) {
+        console.log("failed");
+      } else {
+        console.log("success update");
+      }
+    });
+    return res.send("update");
+  },
+
   findUserByEmail: async (req, res) => {
     const user = await User.findOne({ email: req.params.email });
     if (user) {
