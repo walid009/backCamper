@@ -55,8 +55,6 @@ app.listen(PORT, function(){
 })
 
 
-
-
 const userRoute = require("./routes/user.route")
 const eventRoute = require("./routes/event.route")
 const shareRoute = require("./routes/share.route")
@@ -68,7 +66,6 @@ app.use("/events", eventRoute)
 app.use("/shares", shareRoute)
 app.use("/commentaires", commentaireRoute)
 app.use(express.static('uploads/images'))
-
 
 /*
 //camper participate to event

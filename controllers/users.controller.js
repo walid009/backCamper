@@ -81,43 +81,25 @@ module.exports = {
     const nom = req.body.nom;
 
     const email = req.body.email;
-    User.updateOne({ _id: id }, { nom, email }, function (err) {
+    User.updateOne({ _id: id }, { nom, email }, function async(err) {
       if (err) {
         console.log("failed");
       } else {
+
         console.log("success update user");
+
       }
     });
-    return res.send("update");
+    const isUserFound = await User.findOne({ email });
+    console.log("success update user");
+    return res.json(isUserFound);
+    //return res.send("update");
   },
 
   updateValidationOrginasateur: async (req, res) => {
     const { id } = req.params;
     console.log(req.body);
     User.updateOne({ _id: id }, { valid: req.body.valid }, function (err) {
-      if (err) {
-        console.log("failed");
-      } else {
-        console.log("success update");
-      }
-    });
-    return res.send("update");
-  },
-
-  ValidateOrginasateur: async (req, res) => {
-    const { id } = req.params;
-    User.updateOne({ _id: id }, { approved: true }, function (err) {
-      if (err) {
-        console.log("failed");
-      } else {
-        console.log("success update");
-      }
-    });
-    return res.send("update");
-  },
-  UnValidateOrginasateur: async (req, res) => {
-    const { id } = req.params;
-    User.updateOne({ _id: id }, { approved: false }, function (err) {
       if (err) {
         console.log("failed");
       } else {
@@ -255,6 +237,29 @@ module.exports = {
       return res.json({ key: false });
     }
     return res.json({ key: false });
+  },
+
+  ValidateOrginasateur: async (req, res) => {
+    const { id } = req.params;
+    User.updateOne({ _id: id }, { approved: true }, function (err) {
+      if (err) {
+        console.log("failed");
+      } else {
+        console.log("success update");
+      }
+    });
+    return res.send("update");
+  },
+  UnValidateOrginasateur: async (req, res) => {
+    const { id } = req.params;
+    User.updateOne({ _id: id }, { approved: false }, function (err) {
+      if (err) {
+        console.log("failed");
+      } else {
+        console.log("success update");
+      }
+    });
+    return res.send("update");
   },
 
   sendModifiedPassword: async (req, res) => {

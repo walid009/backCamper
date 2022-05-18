@@ -15,9 +15,9 @@ module.exports = {
     //     res.send(share);
     // },
     createEvent: async (req, res) => {
-        const { titre, description, date } = req.body;
+        const { titre, description, date, image } = req.body;
         console.log(req.body)
-        const share = new Share({ titre, description, date });
+        const share = new Share({ titre, description, date, image });
         await share.save();
         res.send(share);
     },

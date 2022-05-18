@@ -1,16 +1,16 @@
 const { Event } = require("../models/event.model");
 const mongoose = require("mongoose");
-const jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken')
 const { User } = require("../models/user.model");
 const stripe = require('stripe')("sk_test_51KwqvXDAJzKbyS5lYzJiCan0S35slq2p1ezeLHHX7jU7tJlNhh1VT7d91uR3ZminsUpEkGXZQyWZbWOcuOeRjkkC00esVMXSg5"
   , {
-  apiVersion: '2020-08-27',
-  appInfo: { // For sample support and debugging, not required for production:
-    name: "stripe-samples/accept-a-payment/custom-payment-flow",
-    version: "0.0.2",
-    url: "https://github.com/stripe-samples"
-  }
-});
+    apiVersion: '2020-08-27',
+    appInfo: { // For sample support and debugging, not required for production:
+      name: "stripe-samples/accept-a-payment/custom-payment-flow",
+      version: "0.0.2",
+      url: "https://github.com/stripe-samples"
+    }
+  });
 module.exports = {
   getAllEventCreatedBy: async (req, res) => {
     const { emailcreateur } = req.params;
@@ -31,8 +31,16 @@ module.exports = {
     res.send(event);
   },
   createEventWithoutImage: async (req, res) => {
-    const { titre, description, date, price } = req.body;
-    const event = new Event({ titre, description, date, price });
+    const { titre, description, date } = req.body;
+    const event = new Event({ titre, description, date });
+    await event.save();
+    res.send(event);
+  },
+  createEventWithImage: async (req, res) => {
+    console.log(req.file)
+    const { titre, description, date, Longitude, Latitude, price } = req.body;
+
+    const event = new Event({ titre, description, image: req.file.filename, date, Longitude, Latitude, price });
     await event.save();
     res.send(event);
   },
@@ -83,18 +91,18 @@ module.exports = {
         console.log("success update");
       }
     });*/
-    return res.send({exist: true});
+    return res.send({ exist: true });
   },
   UserAlreadyParticipate: async (req, res) => {
-    const { id } = req.params
+    const { _id } = req.params
     const { email } = req.params
     console.log("hello")
-    const userIsFoundInevent = await Event.findOne({ _id:id, participants: { $elemMatch: { email } } });
+    const userIsFoundInevent = await Event.findOne({ _id, participants: { $elemMatch: { email } } });
     console.log(userIsFoundInevent)
     if (userIsFoundInevent) {
-      return res.json( {exist: true} );
+      return res.json({ exist: true });
     }
-    return res.json( {exist: false}  );
+    return res.json({ exist: false });
   },
   UsersParticipate: async (req, res) => {
     const { _id } = req.params
@@ -107,10 +115,11 @@ module.exports = {
     return res.json({ usersExist: false });
   },
 
-  
-  
+
+
+
   stripe: async (req, res) => {
-    const {paymentMethodType, currency,paymentMethodOptions} = req.body;
+    const { paymentMethodType, currency, paymentMethodOptions } = req.body;
 
     // Each payment method type has support for different currencies. In order to
     // support many payment method types and several currencies, this server
@@ -123,10 +132,10 @@ module.exports = {
       amount: 1999,
       currency: currency,
     }
-  
+
     // If this is for an ACSS payment, we add payment_method_options to create
     // the Mandate.
-    if(paymentMethodType === 'acss_debit') {
+    if (paymentMethodType === 'acss_debit') {
       params.payment_method_options = {
         acss_debit: {
           mandate_options: {
@@ -152,14 +161,14 @@ module.exports = {
       params.confirm = true
       params.customer = req.body.customerId || await stripe.customers.create().then(data => data.id)
     }
-  
+
     /**
      * If API given this data, we can overwride it
      */
     if (paymentMethodOptions) {
       params.payment_method_options = paymentMethodOptions
     }
-  
+
     // Create a PaymentIntent with the amount, currency, and a payment method type.
     //
     // See the documentation [0] for the full list of supported parameters.
@@ -167,7 +176,7 @@ module.exports = {
     // [0] https://stripe.com/docs/api/payment_intents/create
     try {
       const paymentIntent = await stripe.paymentIntents.create(params);
-  
+
       // Send publishable key and PaymentIntent details to client
       res.send({
         clientSecret: paymentIntent.client_secret,
